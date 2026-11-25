@@ -1,0 +1,25 @@
+name: Restore deployed LedgerFlow source
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out recovery branch
+        uses: actions/checkout@v4
+        with:
+          ref: recovery/restore-deployed-interface
+      - name: Restore and validate deployed HTML
+        run: bash recovery/restore.sh
+      - name: Commit recovered application source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/index.html
+          git commit -m "recovery: restore deployed LedgerFlow interface source"
+          git push origin HEAD:recovery/restore-deployed-interface
